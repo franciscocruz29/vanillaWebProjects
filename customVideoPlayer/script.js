@@ -1,67 +1,43 @@
 // https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Video_and_audio_APIs
 
 const video = document.getElementById('video');
-const play = document.getElementById('play');
-const stop = document.getElementById('stop');
+const playButton = document.getElementById('play');
+const stopButton = document.getElementById('stop');
 const progress = document.getElementById('progress');
 const timestamp = document.getElementById('timestamp');
 
-// Play & pause video
-function toggleVideoStatus() {
-  if (video.paused) {
-    video.play();
-  } else {
-    video.pause();
-  }
+function toggleVideo() {
+  video.paused ? video.play() : video.pause();
 }
 
-// update play/pause icon
-function updatePlayIcon() {
-  if (video.paused) {
-    play.innerHTML = '<i class="fa fa-play fa-2x"></i>';
-  } else {
-    play.innerHTML = '<i class="fa fa-pause fa-2x"></i>';
-  }
+function updatePlayButtonIcon() {
+  playButton.innerHTML = video.paused ? '<i class="fa fa-play fa-2x"></i>' : '<i class="fa fa-pause fa-2x"></i>';
 }
 
-// Update progress & timestamp
-function updateProgress() {
+function updateProgressAndTimestamp() {
   progress.value = (video.currentTime / video.duration) * 100;
 
-  // Get the minutes
-  let mins = Math.floor(video.currentTime / 60);
-  if (mins < video.duration) {
-    mins = '0' + String(mins);
-  }
+  let mins = Math.floor(video.currentTime / 60).toString().padStart(2, '0');
+  let secs = Math.floor(video.currentTime % 60).toString().padStart(2, '0');
 
-  // Get Seconds
-  let secs = Math.floor(video.currentTime % 60);
-  if (secs < video.duration) {
-    secs = '0' + String(secs);
-  }
-
-  timestamp.innerHTML = `${mins}:${secs}`;
+  timestamp.textContent = `${mins}:${secs}`;
 }
 
-// Set video time to progress
 function setVideoProgress() {
-  video.currentTime = (+progress.value * video.duration) / 100;
+  video.currentTime = (progress.value * video.duration) / 100;
 }
 
-// Stop video
 function stopVideo() {
   video.currentTime = 0;
   video.pause();
 }
 
 // Event listeners
-video.addEventListener('click', toggleVideoStatus);
-video.addEventListener('pause', updatePlayIcon);
-video.addEventListener('play', updatePlayIcon);
-video.addEventListener('timeupdate', updateProgress);
+video.addEventListener('click', toggleVideo);
+video.addEventListener('pause', updatePlayButtonIcon);
+video.addEventListener('play', updatePlayButtonIcon);
+video.addEventListener('timeupdate', updateProgressAndTimestamp);
 
-play.addEventListener('click', toggleVideoStatus);
-
-stop.addEventListener('click', stopVideo);
-
+playButton.addEventListener('click', toggleVideo);
+stopButton.addEventListener('click', stopVideo);
 progress.addEventListener('change', setVideoProgress);
