@@ -1,52 +1,51 @@
-// Get references to the HTML elements for currency and amount inputs, rate display, and swap button
-const currencyEl_one = document.getElementById('currency-one');
-const amountEl_one = document.getElementById('amount-one');
-const currencyEl_two = document.getElementById('currency-two');
-const amountEl_two = document.getElementById('amount-two');
-const rateEl = document.getElementById('rate');
-const swap = document.getElementById('swap');
+// Get references to the HTML elements
+const fromCurrencySelect = document.getElementById('currency-one');
+const fromAmountInput = document.getElementById('amount-one');
+const toCurrencySelect = document.getElementById('currency-two');
+const toAmountInput = document.getElementById('amount-two');
+const exchangeRateDisplay = document.getElementById('rate');
+const swapButton = document.getElementById('swap');
 
-// Function to calculate and display the exchange rate and converted amount
-function calculate() {
-  // Get the selected currencies from the dropdowns
-  const currency_one = currencyEl_one.value;
-  const currency_two = currencyEl_two.value;
+// Function to fetch exchange rate data and update the conversion
+function updateConversion() {
+  const fromCurrency = fromCurrencySelect.value;
+  const toCurrency = toCurrencySelect.value;
 
   // Fetch exchange rate data from an API
-  fetch(`https://api.exchangerate-api.com/v4/latest/${currency_one}`)
+  fetch(`https://api.exchangerate-api.com/v4/latest/${fromCurrency}`)
     .then(res => res.json())
     .then(data => {
       // Calculate the exchange rate between the two currencies
-      const rate = data.rates[currency_two] / data.rates[currency_one];
+      const exchangeRate = data.rates[toCurrency] / data.rates[fromCurrency];
 
-      // Update the rate display element with the calculated rate
-      rateEl.innerText = `1 ${currency_one} = ${rate} ${currency_two}`;
+      // Update the exchange rate display
+      exchangeRateDisplay.innerText = `1 ${fromCurrency} = ${exchangeRate} ${toCurrency}`;
 
-      // Calculate the converted amount and display it in the second amount input
-      amountEl_two.value = (amountEl_one.value * rate).toFixed(2);
+      // Calculate the converted amount and display it in the "to" amount input
+      toAmountInput.value = (fromAmountInput.value * exchangeRate).toFixed(2);
     });
 }
 
 // Event Listeners:
 
-// When the user changes the selected currency for the first input or enters a new amount,
-// call the calculate function to update the rate and converted amount
-currencyEl_one.addEventListener('change', calculate);
-amountEl_one.addEventListener('input', calculate);
+// When the user changes the selected currency for the "from" input or enters a new amount,
+// call the updateConversion function to update the conversion
+fromCurrencySelect.addEventListener('change', updateConversion);
+fromAmountInput.addEventListener('input', updateConversion);
 
-// When the user changes the selected currency for the second input or enters a new amount,
-// call the calculate function to update the rate and converted amount
-currencyEl_two.addEventListener('change', calculate);
-amountEl_two.addEventListener('input', calculate);
+// When the user changes the selected currency for the "to" input or enters a new amount,
+// call the updateConversion function to update the conversion
+toCurrencySelect.addEventListener('change', updateConversion);
+toAmountInput.addEventListener('input', updateConversion);
 
 // When the user clicks the swap button, exchange the selected currencies
-// and then call the calculate function to update the rate and converted amount
-swap.addEventListener('click', () => {
-  const temp = currencyEl_one.value;
-  currencyEl_one.value = currencyEl_two.value;
-  currencyEl_two.value = temp;
-  calculate();
+// and then call the updateConversion function to update the conversion
+swapButton.addEventListener('click', () => {
+  const temp = fromCurrencySelect.value;
+  fromCurrencySelect.value = toCurrencySelect.value;
+  toCurrencySelect.value = temp;
+  updateConversion();
 });
 
-// Call the calculate function initially to set the initial values
-calculate();
+// Call the updateConversion function initially to set the initial values
+updateConversion();
