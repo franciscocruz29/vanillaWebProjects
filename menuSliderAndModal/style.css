@@ -29,7 +29,7 @@ nav {
   top: 0;
   left: 0;
   width: 200px;
-  height: 100%;
+  height: 100vh;
   z-index: 100;
   transform: translateX(-100%);
 }
@@ -163,7 +163,7 @@ button:focus {
   padding: 20px;
 }
 
-.modal-fo rm div {
+.modal-form div {
   margin: 15px 0;
 }
 
